@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project HookHab</title>
+  </head>
+  <body>
+    <div class="timer-container">
+      <h2>Timer</h2>
+
+      <h1 id="display"></h1>
+
+      <p
+        id="endTimeDisplay"
+        style="font-size: 1rem; color: #666; height: 1.2em"
+      ></p>
+
+      <div class="input-group">
+        <select id="timeSelect" onchange="checkCustom()">
+          <option value="" disabled selected>Select Duration</option>
+          <option value="1">1 Minute</option>
+          <option value="5">5 Minutes</option>
+          <option value="15">15 Minutes</option>
+          <option value="25">25 Minutes</option>
+          <option value="30">30 Minutes</option>
+          <option value="60">1 Hour</option>
+          <option value="120">2 Hour</option>
+          <option value="180">3 Hour</option>
+          <option value="240">4 Hour</option>
+          <option value="300">5 Hour</option>
+          <option value="custom">Other...</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <select id="taskSelect" onchange="checkCustomTask()">
+          <option value="" disabled selected>Select Task</option>
+          <option value="">Productivity</option>
+          <option value="">Homework</option>
+          <option value="">Exercise</option>
+          <option value="">Meditating</option>
+          <option value="">Reading</option>
+          <option value="">Writing</option>
+          <option value="">Drawing</option>
+          <option value="custom">Other...</option>
+        </select>
+      </div>
+
+      <div id="customContainer" style="display: none">
+        <div class="custom-time-group">
+          <input
+            type="number"
+            id="customHours"
+            class="time-input"
+            placeholder="Hrs"
+            min="0"
+          />
+          <span class="separator">:</span>
+          <input
+            type="number"
+            id="customMinutes"
+            class="time-input"
+            placeholder="Mins"
+            min="0"
+            max="59"
+          />
+        </div>
+      </div>
+
+      <div id="customContainer2" style="display: none">
+        <div class="custom-task-group">
+          <input type="text" />
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button onclick="startTimer()">Start</button>
+        <button class="stop" onclick="stopTimer()">Stop</button>
+        <button class="reset" onclick="resetTimer()">Reset</button>
+      </div>
+    </div>
+
+    <script>
+      let timer;
+      let totalSeconds = 0;
+
+      function checkCustom() {
+        let dropdown = document.getElementById("timeSelect");
+        let customBox = document.getElementById("customContainer");
+
+        if (dropdown.value === "custom") {
+          customBox.style.display = "block";
+          document.getElementById("customHours").focus(); // Focus on Hours first
+        } else {
+          customBox.style.display = "none";
+        }
+      }
+
+      function checkCustomTask() {
+        let dropdown = document.getElementById("taskSelect");
+        let customBox = document.getElementById("customContainer2");
+
+        if (dropdown.value === "custom") {
+          customBox.style.display = "block";
+        } else {
+          customBox.style.display = "none";
+        }
+      }
+
+      function startTimer() {
+        if (timer) clearInterval(timer);
+
+        let dropdownValue = document.getElementById("timeSelect").value;
+        let finalMinutes = 0;
+
+        if (dropdownValue === "custom") {
+          let hrs = parseInt(document.getElementById("customHours").value) || 0;
+          let mins =
+            parseInt(document.getElementById("customMinutes").value) || 0;
+
+          finalMinutes = hrs * 60 + mins;
+        } else {
+          finalMinutes = parseInt(dropdownValue);
+        }
+
+        if (!finalMinutes || finalMinutes <= 0) {
+          alert("Please enter a valid time!");
+          return;
+        }
+
+        if (totalSeconds === 0) {
+          totalSeconds = finalMinutes * 60;
+        }
+
+        let now = new Date();
+        let endTime = new Date(now.getTime() + finalMinutes * 60000);
+        let timeString = endTime.toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        });
+
+        document.getElementById("endTimeDisplay").innerText =
+          "Ends at " + timeString;
+
+        timer = setInterval(() => {
+          if (totalSeconds <= 0) {
+            clearInterval(timer);
+            document.getElementById("display").innerText = "00:00";
+            document.getElementById("endTimeDisplay").innerText = "Time's up!";
+            alert("Time's up!");
+            return;
+          }
+
+          totalSeconds--;
+          updateDisplay();
+        }, 1000);
+
+        updateDisplay();
+      }
+
+      function stopTimer() {
+        clearInterval(timer);
+      }
+
+      function resetTimer() {
+        stopTimer();
+        totalSeconds = 0;
+        document.getElementById("display").innerText = "00:00";
+        document.getElementById("endTimeDisplay").innerText = "";
+
+        document.getElementById("timeSelect").value = "";
+        document.getElementById("customInput").value = "";
+        checkCustom();
+      }
+
+      function updateDisplay() {
+        let hrs = Math.floor(totalSeconds / 3600);
+        let mins = Math.floor((totalSeconds % 3600) / 60);
+        let secs = totalSeconds % 60;
+
+        let formattedMins = mins < 10 ? "0" + mins : mins;
+        let formattedSecs = secs < 10 ? "0" + secs : secs;
+
+        if (hrs > 0) {
+          let formattedHrs = hrs < 10 ? "0" + hrs : hrs;
+          document.getElementById("display").innerText =
+            `${formattedHrs}:${formattedMins}:${formattedSecs}`;
+        } else {
+          document.getElementById("display").innerText =
+            `${formattedMins}:${formattedSecs}`;
+        }
+      }
+    </script>
+  </body>
+</html>
