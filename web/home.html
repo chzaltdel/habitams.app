@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habitam</title>
+    <link rel="icon" type="image/x-icon" href="styles/images/logo.png" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Margarine&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body class="home-page">
+    <div id="global-tooltip"></div>
+
+    <div class="page-container">
+      <div class="page-header">
+        <img class="image-logo" src="styles/images/logo.png" alt="logo" />
+        <nav class="navbar">
+          <ul>
+            <li><a href="{{ url_for('home') }}">HOME</a></li>
+            <li><a href="{{ url_for('habits') }}">HABITS</a></li>
+            <li><a href="{{ url_for('collect') }}">COLLECT</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="bar-container">
+        <div class="act-point-container">
+          <div class="total-points">
+            <p id="totalPointsDisplay">Total Points:</p>
+          </div>
+          <div class="activity-container">
+            <p class="bar-title">RECENT ACTIVITY</p>
+          </div>
+        </div>
+        <div class="habits-month-container">
+          <p class="bar-title">HABIT THIS MONTH</p>
+        </div>
+        <div class="qod-container">
+          <p class="bar-title">QUOTE OF THE DAY</p>
+          <p class="qod-text" id="quote-text">Loading inspiration...</p>
+          <cite class="qod-author" id="quote-author"></cite>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer-style">
+      Amalgamation by
+      <a href="https://github.com/chzaltdel" target="_blank">chzaltdel</a>
+    </footer>
+
+    <footer class="footer-style">
+      Quotes used from
+      <a href="https://zenquotes.io/" target="_blank">ZenQuotes API</a>
+    </footer>
+    <script>
+      let totalPoints = parseInt(localStorage.getItem("userPoints")) || 0;
+
+      async function getQuoteOfDay() {
+        const proxyUrl = "https://corsproxy.io/?";
+        const apiUrl = "https://zenquotes.io/api/today";
+
+        try {
+          const response = await fetch(proxyUrl + apiUrl);
+          const data = await response.json();
+
+          const quote = data[0].q;
+          const author = data[0].a;
+
+          document.getElementById("quote-text").innerText = `"${quote}"`;
+          document.getElementById("quote-author").innerText = `— ${author}`;
+        } catch (error) {
+          console.error("Error fetching quote:", error);
+          document.getElementById("quote-text").innerText =
+            "Could not load quote. Stay inspired anyway!";
+        }
+      }
+      getQuoteOfDay();
+
+      window.onload = () => {
+        displayRecentActivity();
+        displayMostFrequentHabit();
+        updatePointsDisplay();
+      };
+
+      function displayRecentActivity() {
+        const activityContainer = document.querySelector(".activity-container");
+
+        const habitHistory =
+          JSON.parse(localStorage.getItem("habitHistory")) || [];
+
+        activityContainer.innerHTML =
+          '<p class="bar-title">RECENT ACTIVITY</p>';
+
+        if (habitHistory.length === 0) {
+          const emptyMsg = document.createElement("p");
+          emptyMsg.style.cssText =
+            "color: #343434; margin-top: 30px; font-size: 25px;";
+          emptyMsg.textContent =
+            "No habits made yet. Start one on the Habits page!";
+          activityContainer.appendChild(emptyMsg);
+          return;
+        }
+        const latestThree = habitHistory.slice(-3).reverse();
+
+        latestThree.forEach((habit) => {
+          const entry = document.createElement("div");
+          entry.style.cssText =
+            "padding: 10px 0; text-align: left; width: 90%; margin: 0 auto;";
+
+          entry.innerHTML = `
+                <div style="display: flex; justify-content: space-between;">
+                    <strong style="font-size: 15px; color: rgb(92, 100, 103);">${habit.name}</strong>
+                    <span style="font-size: 12px; color: rgb(92, 100, 103);">${habit.date}</span>
+                </div>
+                <div style="font-size: 15px; margin-top: 4px; color: rgb(92, 100, 103);">
+                    ${habit.duration} mins • <span style="font-weight: bold;">+${habit.points} pts</span>
+                </div>
+            `;
+          activityContainer.appendChild(entry);
+        });
+      }
+
+      function displayMostFrequentHabit() {
+        const monthContainer = document.querySelector(
+          ".habits-month-container",
+        );
+        const habitHistory =
+          JSON.parse(localStorage.getItem("habitHistory")) || [];
+        const tooltip = document.getElementById("global-tooltip"); // Access the global portal
+
+        monthContainer.innerHTML = '<p class="bar-title">HABIT THIS MONTH</p>';
+
+        if (habitHistory.length === 0) {
+          monthContainer.innerHTML +=
+            '<p style="color: #343434; margin-top: 20px;">No data yet!</p>';
+          return;
+        }
+
+        const counts = {};
+        habitHistory.forEach((habit) => {
+          counts[habit.name] = (counts[habit.name] || 0) + 1;
+        });
+
+        let mostFrequentName = Object.keys(counts).reduce((a, b) =>
+          counts[a] > counts[b] ? a : b,
+        );
+
+        const topHabits = habitHistory.filter(
+          (h) => h.name === mostFrequentName,
+        );
+
+        const categoryDiv = document.createElement("div");
+        categoryDiv.className = "current-habits";
+        categoryDiv.style.width = "90%";
+        categoryDiv.style.margin = "10px auto";
+        categoryDiv.style.height = "80%";
+        categoryDiv.style.overflowY = "auto"; // Ensure this can scroll if many habits
+
+        const titleP = document.createElement("p");
+        titleP.className = "habits-title";
+        titleP.textContent = `${mostFrequentName}`;
+        titleP.style.fontSize = "30px";
+
+        const timelineDiv = document.createElement("div");
+        timelineDiv.className = "habits-timeline";
+
+        topHabits.forEach((habit) => {
+          const cube = document.createElement("div");
+          cube.className = "habit-cube";
+
+          // Define the info string for the portal tooltip
+          const info = `${habit.date} | ${habit.duration}m | +${habit.points}pts`;
+
+          // Attach the same Portal event listeners
+          cube.addEventListener("mouseover", () => {
+            tooltip.textContent = info;
+            tooltip.style.visibility = "visible";
+            tooltip.style.opacity = "1";
+          });
+
+          cube.addEventListener("mousemove", (e) => {
+            const tooltipWidth = tooltip.offsetWidth;
+            let left = e.pageX - tooltipWidth / 2;
+            let top = e.pageY + 20;
+
+            if (left < 5) left = 5;
+            if (left + tooltipWidth > window.innerWidth - 5) {
+              left = window.innerWidth - tooltipWidth - 5;
+            }
+
+            tooltip.style.left = left + "px";
+            tooltip.style.top = top + "px";
+          });
+
+          cube.addEventListener("mouseout", () => {
+            tooltip.style.visibility = "hidden";
+            tooltip.style.opacity = "0";
+          });
+
+          timelineDiv.appendChild(cube);
+        });
+
+        categoryDiv.appendChild(titleP);
+        categoryDiv.appendChild(timelineDiv);
+        monthContainer.appendChild(categoryDiv);
+      }
+
+      function updatePointsDisplay() {
+        document.getElementById("totalPointsDisplay").innerText =
+          `Total Points: ${totalPoints}`;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habitam</title>
+    <link rel="icon" type="image/x-icon" href="styles/images/logo.png" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Margarine&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body class="collect-page">
+    <div class="page-container">
+      <div class="page-header">
+        <img class="image-logo" src="styles/images/logo.png" alt="logo" />
+        <nav class="navbar">
+          <ul>
+            <li><a href="{{ url_for('home') }}">HOME</a></li>
+            <li><a href="{{ url_for('habits') }}">HABITS</a></li>
+            <li><a href="{{ url_for('collect') }}">COLLECT</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div id="collection-modal" class="modal">
+        <div class="collection-content">
+          <div class="collection-body">
+            <div class="view-habitams">
+              <h3 id="view-name"></h3>
+              <img
+                id="view-img"
+                src=""
+                alt="Selected Habitams"
+                style="display: none"
+              />
+              <p id="view-desc"></p>
+            </div>
+
+            <div class="scroll-habitams">
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/bear-df.png',
+                    'Bear',
+                    'Can\'t forget the bear necessities',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/bear-df.png"
+                  alt="bear-df"
+                />
+                <p>Bear</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/bear-farm.png',
+                    'Farm Bear',
+                    'Buckle my shoe!',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/bear-farm.png"
+                  alt="bear-farm"
+                />
+                <p>Farmer Bear</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/bear-fred.png',
+                    'Frederick Von Fazbearington',
+                    'Would you care to spend five humble evenings in my lovely abode?',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/bear-fred.png"
+                  alt="bear-fred"
+                />
+                <p>Frederick Von Fazbearington</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/bear-gold.png',
+                    'Gold Bear',
+                    'Always believe in your bear soul',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/bear-gold.png"
+                  alt="bear-gold"
+                />
+                <p>Gold Bear</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/cat-df.png',
+                    'Cat',
+                    'They always land on their feet!',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/cat-df.png"
+                  alt="cat-df"
+                />
+                <p>Cat</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/cat-cool.png',
+                    'Cool Cat',
+                    'Tapping on the toe with a new hat!',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/cat-cool.png"
+                  alt="cat-cool"
+                />
+                <p>Cool Cat</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/cat-bred.png',
+                    'Bread Cat',
+                    'What a bread head!',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/cat-bred.png"
+                  alt="cat-bred"
+                />
+                <p>Bread Cat</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/cat-blaze.png',
+                    'Purple Cat',
+                    'Princess from another dimension',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/cat-blaze.png"
+                  alt="cat-blaze"
+                />
+                <p>Purple Cat</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/chick-df.png',
+                    'Chicken',
+                    'One of the most popular flightless birds',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/chick-df.png"
+                  alt="chick-df"
+                />
+                <p>Chicken</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/chick-teto.png',
+                    'Teto Chicken',
+                    'In the golden hour you seem to know no fear, Is it really true?',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/chick-teto.png"
+                  alt="chick-teto"
+                />
+                <p>Teto Chicken</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/chick-mc.png',
+                    'Cubed Chicken',
+                    'Poultry now in cube form!',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/chick-mc.png"
+                  alt="chick-mc"
+                />
+                <p>Cubed Chicken</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/chick-robo.png',
+                    'Robot Chicken',
+                    'Half Robot, Half Chicken',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/chick-robo.png"
+                  alt="chick-robo"
+                />
+                <p>Robot Chicken</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/dog-df.png',
+                    'Dog',
+                    'Everyone loves dogs or you\'re allergic',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/dog-df.png"
+                  alt="dog-df"
+                />
+                <p>Dog</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/dog-png.png',
+                    'PNG Dog',
+                    'Trusted Pet of the Princess of Erusea!',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/dog-png.png"
+                  alt="dog-png"
+                />
+                <p>PNG Dog</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/dog-sling.png',
+                    'Sling Dog',
+                    'Came from a friend perhaps?',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/dog-sling.png"
+                  alt="dog-sling"
+                />
+                <p>Sling Dog</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/dog-silent.png',
+                    'Mischievous Dog',
+                    'It can\'t be. It was all your work?',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/dog-silent.png"
+                  alt="dog-silent"
+                />
+                <p>Mischievous Dog</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/horse-df.png',
+                    'Horse',
+                    'A requirement for cowboys!',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/horse-df.png"
+                  alt="horse-df"
+                />
+                <p>Horse</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/horse-happy.png',
+                    'Happy Horse',
+                    'I don\'t know about this one chat',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/horse-happy.png"
+                  alt="horse-happy"
+                />
+                <p>Happy Horse</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/horse-hero.png',
+                    'Hero Horse',
+                    'Timeless and reliable stead',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/horse-hero.png"
+                  alt="horse-hero"
+                />
+                <p>Hero Horse</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/horse-science.png',
+                    'Science Horse',
+                    'He\'s a highly trained horse',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/horse-science.png"
+                  alt="horse-science"
+                />
+                <p>Science Horse</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/pig-df.png',
+                    'Pig',
+                    'Pink and oinky fella',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/pig-df.png"
+                  alt="pig-df"
+                />
+                <p>Pig</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/pig-grn.png',
+                    'Green Pig',
+                    'Enemies consists of high velocity superpowered birds',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/pig-grn.png"
+                  alt="pig-grn"
+                />
+                <p>Green Pig</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/pig-sp1.png',
+                    'Space Pig',
+                    'Now in low gravity!',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/pig-sp1.png"
+                  alt="pig-sp1"
+                />
+                <p>Space Pig</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/pig-mc.png',
+                    'Cubed Pig',
+                    'From the very popular block game',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/pig-mc.png"
+                  alt="pig-mc"
+                />
+                <p>Cubed Pig</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/tamaraw-df.png',
+                    'Tamaraw',
+                    'Local farm animal',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/tamaraw-df.png"
+                  alt="tamaraw-df"
+                />
+                <p>Tamaraw</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/tamaraw-war.png',
+                    'War Tamaraw',
+                    'Battle Hardened',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/tamaraw-war.png"
+                  alt="tamaraw-war"
+                />
+                <p>War Tamaraw</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/tamaraw-doc.png',
+                    'Doctor Tamaraw',
+                    'Hopefully not Lupus',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/tamaraw-doc.png"
+                  alt="tamaraw-doc"
+                />
+                <p>Doctor Tamaraw</p>
+              </div>
+              <div
+                class="small-habitams-scroll"
+                onclick="
+                  updateView(
+                    'styles/images/tamaraw-mc1.png',
+                    'Cubed Tamaraw',
+                    'Not included in base game!',
+                  )
+                "
+              >
+                <img
+                  class="habitams-scroll-img"
+                  src="styles/images/tamaraw-mc1.png"
+                  alt="tamaraw-mc"
+                />
+                <p>Cubed Tamaraw</p>
+              </div>
+            </div>
+          </div>
+          <button class="start-button" onclick="closeModal()">Close</button>
+        </div>
+      </div>
+
+      <div class="collect-container">
+        <div class="act-point-container">
+          <div class="total-points">
+            <p id="totalPointsDisplay">Total Points:</p>
+          </div>
+          <button class="collection" onclick="openModal()">
+            <p>COLLECTION</p>
+          </button>
+        </div>
+        <div class="habitams-container"></div>
+        <div class="buttons-container">
+          <div
+            class="habitams-btn"
+            onclick="rollHabitam()"
+            style="cursor: pointer"
+          >
+            <p>HABITAMS</p>
+            <p>Points x 500</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer-style">
+      Amalgamation by
+      <a href="https://github.com/chzaltdel" target="_blank">chzaltdel</a>
+    </footer>
+
+    <footer class="footer-style">
+      Quotes used from
+      <a href="https://zenquotes.io/" target="_blank">ZenQuotes API</a>
+    </footer>
+    <script>
+      const animalSounds = {
+        "styles/images/bear-df.png": "styles/sounds/bear.mp3",
+        "styles/images/bear-gold.png": "styles/sounds/bear.mp3",
+        "styles/images/bear-farm.png": "styles/sounds/bear.mp3",
+        "styles/images/bear-fred.png": "styles/sounds/bear-fred.mp3",
+
+        "styles/images/tamaraw-df.png": "styles/sounds/tamaraw.mp3",
+        "styles/images/tamaraw-war.png": "styles/sounds/tamaraw.mp3",
+        "styles/images/tamaraw-doc.png": "styles/sounds/tamaraw.mp3",
+        "styles/images/tamaraw-mc1.png": "styles/sounds/tamaraw.mp3",
+
+        "styles/images/cat-df.png": "styles/sounds/cat.mp3",
+        "styles/images/cat-cool.png": "styles/sounds/cat.mp3",
+        "styles/images/cat-blaze.png": "styles/sounds/cat.mp3",
+        "styles/images/cat-bred.png": "styles/sounds/cat.mp3",
+
+        "styles/images/dog-df.png": "styles/sounds/dog.mp3",
+        "styles/images/dog-silent.png": "styles/sounds/dog.mp3",
+        "styles/images/dog-png.png": "styles/sounds/dog.mp3",
+        "styles/images/dog-sling.png": "styles/sounds/dog.mp3",
+
+        "styles/images/chick-df.png": "styles/sounds/chicken.mp3",
+        "styles/images/chick-teto.png": "styles/sounds/chicken.mp3",
+        "styles/images/chick-robot.png": "styles/sounds/chicken.mp3",
+        "styles/images/chick-mc.png": "styles/sounds/chicken.mp3",
+
+        "styles/images/pig-df.png": "styles/sounds/pig.mp3",
+        "styles/images/pig-grn.png": "styles/sounds/pig.mp3",
+        "styles/images/pig-mc.png": "styles/sounds/pig.mp3",
+        "styles/images/pig-sp1.png": "styles/sounds/pig.mp3",
+
+        "styles/images/horse-df.png": "styles/sounds/horse.mp3",
+        "styles/images/horse-hero.png": "styles/sounds/horse.mp3",
+        "styles/images/horse-science.png": "styles/sounds/horse.mp3",
+        "styles/images/horse-happy.png": "styles/sounds/horse.mp3",
+      };
+
+      let totalPoints = parseInt(localStorage.getItem("userPoints")) || 0;
+
+      function updatePointsDisplay() {
+        document.getElementById("totalPointsDisplay").innerText =
+          `Total Points: ${totalPoints}`;
+      }
+
+      function openModal() {
+        document.getElementById("collection-modal").style.display = "flex";
+      }
+
+      function closeModal() {
+        document.getElementById("collection-modal").style.display = "none";
+      }
+
+      window.onload = () => {
+        updatePointsDisplay();
+      };
+
+      window.onclick = function (event) {
+        const modal = document.getElementById("collection-modal");
+        if (event.target == modal) {
+          closeModal();
+        }
+      };
+
+      document.getElementById("totalPointsDisplay").textContent =
+        `Total Points: ${totalPoints}`;
+
+      function updateView(imageSrc, name, description) {
+        const nameElement = document.getElementById("view-name");
+        const descElement = document.getElementById("view-desc");
+        const imgElement = document.getElementById("view-img");
+
+        imgElement.src = imageSrc;
+        imgElement.style.display = "block";
+        nameElement.innerText = name;
+        descElement.innerText = description;
+      }
+
+      const habitamsList = [
+        "styles/images/bear-df.png",
+        "styles/images/bear-farm.png",
+        "styles/images/bear-fred.png",
+        "styles/images/bear-gold.png",
+        "styles/images/cat-df.png",
+        "styles/images/cat-cool.png",
+        "styles/images/cat-bred.png",
+        "styles/images/cat-blaze.png",
+        "styles/images/chick-df.png",
+        "styles/images/chick-teto.png",
+        "styles/images/chick-mc.png",
+        "styles/images/chick-robo.png",
+        "styles/images/dog-df.png",
+        "styles/images/dog-png.png",
+        "styles/images/dog-sling.png",
+        "styles/images/dog-silent.png",
+        "styles/images/horse-df.png",
+        "styles/images/horse-happy.png",
+        "styles/images/horse-hero.png",
+        "styles/images/horse-science.png",
+        "styles/images/pig-df.png",
+        "styles/images/pig-grn.png",
+        "styles/images/pig-sp1.png",
+        "styles/images/pig-mc.png",
+        "styles/images/tamaraw-df.png",
+        "styles/images/tamaraw-war.png",
+        "styles/images/tamaraw-doc.png",
+        "styles/images/tamaraw-mc1.png",
+      ];
+
+      let myCollection = JSON.parse(localStorage.getItem("myHabitams")) || [];
+
+      function updatePointsDisplay() {
+        document.getElementById("totalPointsDisplay").innerText =
+          `Total Points: ${totalPoints}`;
+      }
+
+      function renderHabitam(imageSrc) {
+        const container = document.querySelector(".habitams-container");
+        const newAnimalDiv = document.createElement("div");
+        newAnimalDiv.classList.add("habitams-animal");
+
+        newAnimalDiv.onclick = () => {
+          const soundPath = animalSounds[imageSrc];
+
+          if (soundPath) {
+            const audio = new Audio(soundPath);
+            audio.play().catch((err) => console.error("Playback failed:", err));
+          } else {
+            console.warn("No sound mapped for:", imageSrc);
+            new Audio("assets/sounds/default_pop.mp3").play();
+          }
+        };
+
+        const img = document.createElement("img");
+        img.src = imageSrc;
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "contain";
+
+        newAnimalDiv.appendChild(img);
+        container.appendChild(newAnimalDiv);
+      }
+
+      function rollHabitam() {
+        if (totalPoints < 500) {
+          alert("Not enough points!");
+          return;
+        }
+        if (myCollection.length >= habitamsList.length) {
+          alert("Congratulations! You've collected every Habitam!");
+          return;
+        }
+
+        let selectedImg;
+        let isDuplicate = true;
+
+        while (isDuplicate) {
+          const randomIndex = Math.floor(Math.random() * habitamsList.length);
+          selectedImg = habitamsList[randomIndex];
+
+          if (!myCollection.includes(selectedImg)) {
+            isDuplicate = false;
+          }
+        }
+
+        totalPoints -= 500;
+        localStorage.setItem("userPoints", totalPoints);
+        updatePointsDisplay();
+
+        myCollection.push(selectedImg);
+        localStorage.setItem("myHabitams", JSON.stringify(myCollection));
+
+        renderHabitam(selectedImg);
+      }
+
+      window.onload = () => {
+        updatePointsDisplay();
+
+        myCollection.forEach((imgSrc) => {
+          renderHabitam(imgSrc);
+        });
+      };
+    </script>
+  </body>
+</html>

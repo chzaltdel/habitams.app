@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habitam</title>
+    <link rel="icon" type="image/x-icon" href="styles/images/logo.png" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Margarine&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+
+  <body class="habits-page">
+    <div id="global-tooltip"></div>
+
+    <div class="page-container">
+      <div class="page-header">
+        <img class="image-logo" src="styles/images/logo.png" alt="logo" />
+        <nav class="navbar">
+          <ul>
+            <li><a href="{{ url_for('home') }}">HOME</a></li>
+            <li><a href="{{ url_for('habits') }}">HABITS</a></li>
+            <li><a href="{{ url_for('collect') }}">COLLECT</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="bar-container">
+        <div class="habit-container">
+          <div class="act-point-container">
+            <div class="total-points">
+              <p id="totalPointsDisplay">Total Points: </p>
+            </div>
+          </div>
+
+          <button class="habit-button" onclick="openModal()">
+            <img
+              class="habit-plus"
+              src="styles/images/plus2.png"
+              alt="plus-icon"
+            />
+            <p class="new-habit">New Habit</p>
+          </button>
+
+          <div class="timer-div">
+            <p class="timer-text">Timer:</p>
+            <p class="timer-time">00:00</p>
+            <button class="stop-time" id="stopTimer">Stop</button>
+            <p class="points-earned">Points:<span id="pointsPredicted">0</span></p>
+          </div>
+        </div>
+        <div class="habit-record">
+          <div class="current-habits">
+            <div class="habits-timeline"></div>
+          </div>
+        </div>
+      </div>
+
+        <div id="habitModal" class="modal">
+          <div class="habit-modal">
+            <h2>New Habit</h2>
+            <p>What would you like to track today?</p>
+
+            <div class="duration-container">
+              <select  class="select-style"  id="timeSelect" onchange="checkCustomTime(); updatePointsPreview();">
+                <option value="" disabled selected>Select Duration</option>
+                <option value="1">1 Minute</option>
+                <option value="5">5 Minutes</option>
+                <option value="15">15 Minutes</option>
+                <option value="25">25 Minutes</option>
+                <option value="30">30 Minutes</option>
+                <option value="45">45 Minutes</option>
+                <option value="50">50 Minutes</option>
+                <option value="60">1 Hour</option>
+                <option value="120">2 Hours</option>
+                <option value="180">3 Hours</option>
+                <option value="300">5 Hours</option>
+              </select>
+            </div>
+
+            <div class="tasks-container">
+              <select class="select-style2" id="taskSelect" onchange="checkCustomTask()">
+                <option value="" disabled selected>Select Task</option>
+                <option value="Productivity">Productivity</option>
+                <option value="Homework">Homework</option>
+                <option value="Exercise">Exercise</option>
+                <option value="Meditating">Meditating</option>
+                <option value="Reading">Reading</option>
+                <option value="custom">Other...</option>
+              </select>
+            </div>
+
+            <div id="custom-task-input" style="display: none">
+                <input class="custom-task" type="text" id="customTaskInput" placeholder="Enter habit name..." />
+            </div>
+
+            <button class="start-button"onclick="startTimer()">Start</button>
+            <button class="start-button" onclick="closeModal()">Close</button>
+          </div> 
+        </div> 
+
+        
+        <div id="congratsModal" class="modal">
+          <div class="congrats-modal">
+            <h2>Congratulations!</h2>
+            <p>You earned <span id="pointsEarned">0</span> points for <span id="habitName">your habit</span>!</p>
+            <button class="start-button" onclick="closeModal2()">Close</button>
+          </div>
+        </div>
+
+    <footer class="footer-top">
+      Amalgamation by
+      <a href="https://github.com/chzaltdel" target="_blank">chzaltdel</a>
+    </footer>
+    <footer class="footer-style">
+      Quotes used from
+      <a href="https://zenquotes.io/" target="_blank">ZenQuotes API</a>
+    </footer>
+  </body>
+
+  <script>
+    let timerInterval; 
+    let endTime; 
+    let totalPoints = parseInt(localStorage.getItem('userPoints')) || 0;
+    let habitHistory = JSON.parse(localStorage.getItem('habitHistory')) || [];
+    let customTasks = JSON.parse(localStorage.getItem('customTasks')) || [];
+
+    window.onload = () => {
+      loadCustomTasks();
+      updatePointsDisplay();
+      renderHabitHistory();
+    };
+
+    function openModal() {
+      const modal = document.getElementById("habitModal");
+      modal.style.display = "flex";
+    }
+
+    function congratsModal(){
+      const modal = document.getElementById("congratsModal");
+      modal.style.display = "flex";
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("habitModal");
+      modal.style.display = "none";
+    }
+
+    
+    function closeModal2() {
+      const modal = document.getElementById("congratsModal");
+      modal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+      const modal = document.getElementById("habitModal");
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    function checkCustomTime() {
+      const timeSelect = document.getElementById('timeSelect');
+      const customTimeSection = document.getElementById('custom-duration-input');
+    }
+
+    function checkCustomTask() {
+      const taskSelect = document.getElementById('taskSelect');
+      const customTaskSection = document.getElementById('custom-task-input');
+      customTaskSection.style.display = (taskSelect.value === 'custom') ? 'block' : 'none';
+    }
+
+    function loadCustomTasks() {
+        const taskSelect = document.getElementById('taskSelect');
+        const customOption = taskSelect.querySelector('option[value="custom"]');
+        
+        customTasks.forEach(task => {
+            if (![...taskSelect.options].some(opt => opt.value === task)) {
+                const newOpt = document.createElement('option');
+                newOpt.value = task;
+                newOpt.textContent = task;
+                taskSelect.insertBefore(newOpt, customOption);
+            }
+        });
+    }
+    function startTimer() {
+        const timeSelect = document.getElementById('timeSelect').value;
+        const taskSelect = document.getElementById('taskSelect');
+        const customTaskInput = document.getElementById('customTaskInput');
+
+        let taskName = taskSelect.value;
+      
+        if (taskName === 'custom') {
+            taskName = customTaskInput.value.trim();
+            if (!taskName) return alert("Please enter a habit name!");
+
+            if (!customTasks.includes(taskName)) {
+                customTasks.push(taskName);
+                localStorage.setItem('customTasks', JSON.stringify(customTasks));
+                
+                const newOpt = document.createElement('option');
+                newOpt.value = taskName;
+                newOpt.textContent = taskName;
+                taskSelect.insertBefore(newOpt, taskSelect.querySelector('option[value="custom"]'));
+            }
+        }
+
+        if (!timeSelect || !taskName) return alert("Fill in all fields!");
+
+        const durationMinutes = parseInt(timeSelect);
+        const pointsEarned = durationMinutes * 10;
+        endTime = Date.now() + (durationMinutes * 60 * 1000);
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            const remainingMs = endTime - Date.now();
+            if (remainingMs <= 0) {
+                clearInterval(timerInterval);
+                completeHabit(taskName, durationMinutes, pointsEarned);
+
+                showCompletionNotification(taskName, pointsEarned);
+            } else {
+                updateDisplayFromTimestamp(remainingMs);
+            }
+        }, 1000);
+
+        closeModal();
+    }
+
+    function showCompletionNotification(name, points) {
+        
+        const modal = document.getElementById("congratsModal");
+        modal.querySelector('h2').innerText = "Habit Complete!";
+        modal.querySelector('p').innerText = `You earned ${points} points for ${name}.`;
+        congratsModal();
+    }
+
+    
+
+    function completeHabit(name, duration, points) {
+        const entry = { name, duration, points, date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+        habitHistory.push(entry);
+        localStorage.setItem('habitHistory', JSON.stringify(habitHistory));
+        
+        totalPoints += points;
+        localStorage.setItem('userPoints', totalPoints);
+        
+        updatePointsDisplay();
+        renderHabitHistory();
+    }
+
+    const tooltip = document.createElement("div");
+    tooltip.id = "global-tooltip";
+    document.body.appendChild(tooltip);
+
+    function renderHabitHistory() {
+        const recordContainer = document.querySelector(".habit-record");
+        recordContainer.innerHTML = '';
+        const tooltip = document.getElementById("global-tooltip");
+
+        const grouped = habitHistory.reduce((acc, habit) => {
+            if (!acc[habit.name]) acc[habit.name] = [];
+            acc[habit.name].push(habit);
+            return acc;
+        }, {});
+
+        for (const category in grouped) {
+            const categoryDiv = document.createElement("div");
+            categoryDiv.className = "current-habits";
+
+            const titleP = document.createElement("p");
+            titleP.className = "habits-title";
+            titleP.textContent = category;
+
+            const timelineDiv = document.createElement("div");
+            timelineDiv.className = "habits-timeline";
+
+            grouped[category].forEach(habit => {
+                const cube = document.createElement("div");
+                cube.className = "habit-cube";
+                
+                const info = `${habit.date} @ ${habit.time || 'N/A'} | ${habit.duration} mins | +${habit.points} pts`;
+                
+                cube.addEventListener("mouseover", () => {
+                            tooltip.textContent = info;
+                            tooltip.style.visibility = "visible";
+                            tooltip.style.opacity = "1";
+                        });
+
+                        cube.addEventListener("mousemove", (e) => {
+                            const tooltipWidth = tooltip.offsetWidth;
+                            let left = e.pageX - (tooltipWidth / 2);
+                            let top = e.pageY + 20;
+
+                            // Mobile Boundary Checks
+                            if (left < 5) left = 5;
+                            if (left + tooltipWidth > window.innerWidth - 5) {
+                                left = window.innerWidth - tooltipWidth - 5;
+                            }
+
+                            tooltip.style.left = left + "px";
+                            tooltip.style.top = top + "px";
+                        });
+
+                        cube.addEventListener("mouseout", () => {
+                            tooltip.style.visibility = "hidden";
+                            tooltip.style.opacity = "0";
+                        });
+
+                        timelineDiv.appendChild(cube);
+                    });
+                        
+            categoryDiv.appendChild(titleP);
+            categoryDiv.appendChild(timelineDiv);
+            recordContainer.appendChild(categoryDiv);
+        }
+    }
+
+    function updateDisplayFromTimestamp(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      
+      document.querySelector(".timer-time").textContent = 
+        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function updatePointsDisplay() {
+      document.getElementById("totalPointsDisplay").innerText = `Total Points: ${totalPoints}`;
+    }
+
+    function updatePointsPreview() {
+      const timeSelect = document.getElementById('timeSelect').value;
+      const pointsDisplay = document.getElementById('pointsPredicted');
+      
+      if (timeSelect && timeSelect !== "custom") {
+        const minutes = parseInt(timeSelect);
+        const predictedPoints = minutes * 10;
+        pointsDisplay.innerText = predictedPoints;
+      } else {
+        pointsDisplay.innerText = "0";
+      }
+    }
+
+    document.getElementById("stopTimer").addEventListener("click", stopTimer);
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        
+        endTime = null;
+        
+        document.querySelector(".timer-time").textContent = "00:00";
+        
+        const endTimeDisplay = document.getElementById("endTimeDisplay");
+        if (endTimeDisplay) endTimeDisplay.innerText = "Timer stopped";
+        document.getElementById("pointsPredicted").innerText = "0";
+    }
+  </script>
+
+</html>
