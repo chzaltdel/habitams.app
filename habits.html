@@ -127,6 +127,8 @@
     let totalPoints = parseInt(localStorage.getItem('userPoints')) || 0;
     let habitHistory = JSON.parse(localStorage.getItem('habitHistory')) || [];
     let customTasks = JSON.parse(localStorage.getItem('customTasks')) || [];
+    const completionSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+    completionSound.loop = true;
 
     window.onload = () => {
       loadCustomTasks();
@@ -153,6 +155,9 @@
     function closeModal2() {
       const modal = document.getElementById("congratsModal");
       modal.style.display = "none";
+
+      completionSound.pause();
+      completionSound.currentTime = 0;
     }
 
     window.onclick = function (event) {
@@ -219,6 +224,8 @@
             const remainingMs = endTime - Date.now();
             if (remainingMs <= 0) {
                 clearInterval(timerInterval);
+
+                completionSound.play().catch(e => console.log("Playback interaction required"));
                 completeHabit(taskName, durationMinutes, pointsEarned);
 
                 showCompletionNotification(taskName, pointsEarned);
