@@ -127,7 +127,7 @@
     let totalPoints = parseInt(localStorage.getItem('userPoints')) || 0;
     let habitHistory = JSON.parse(localStorage.getItem('habitHistory')) || [];
     let customTasks = JSON.parse(localStorage.getItem('customTasks')) || [];
-    const completionSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+    const completionSound = new Audio('styles/sounds/alert-sunkiss.wav');
     completionSound.loop = true;
 
     window.onload = () => {
