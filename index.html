@@ -60,7 +60,7 @@
       let totalPoints = parseInt(localStorage.getItem("userPoints")) || 0;
 
       async function getQuoteOfDay() {
-        const proxyUrl = "https://corsproxy.io/?";
+        const proxyUrl = "https://api.allorigins.win/raw?url=";
         const apiUrl = "https://zenquotes.io/api/today";
 
         try {
