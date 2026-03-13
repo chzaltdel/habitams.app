@@ -60,33 +60,30 @@
       let totalPoints = parseInt(localStorage.getItem("userPoints")) || 0;
 
       async function getQuoteOfDay() {
-        const apiUrl =
-          "https://api.allorigins.win/get?url=" +
-          encodeURIComponent("https://zenquotes.io/api/today");
+        const apiUrl = "https://quotes-api-self.vercel.app/quote";
 
         try {
-          const response = await fetch(
-            `https://api.allorigins.win/get?url=${encodeURIComponent("https://zenquotes.io/api/today")}`,
-          );
+          const response = await fetch(apiUrl);
 
           if (!response.ok) throw new Error("Network response was not ok");
 
-          const result = await response.json();
-          const data = JSON.parse(result.contents);
+          const data = await response.json();
 
-          if (data && data[0]) {
-            document.getElementById("quote-text").innerText = `"${data[0].q}"`;
+          if (data && data.quote) {
+            document.getElementById("quote-text").innerText = `"${data.quote}"`;
             document.getElementById("quote-author").innerText =
-              `— ${data[0].a}`;
+              `— ${data.author}`;
           }
         } catch (error) {
           console.error("Error fetching quote:", error);
+          // Reliable fallback
           document.getElementById("quote-text").innerText =
-            "Error fetching quote. Sorgi";
+            '"Error fetching quote, so sorgi :<"';
         }
       }
 
       getQuoteOfDay();
+
       window.onload = () => {
         displayRecentActivity();
         displayMostFrequentHabit();
