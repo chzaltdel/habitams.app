@@ -60,8 +60,9 @@
       let totalPoints = parseInt(localStorage.getItem("userPoints")) || 0;
 
       async function getQuoteOfDay() {
-        const proxyUrl = "https://api.allorigins.win/raw?url=";
-        const apiUrl = "https://zenquotes.io/api/today";
+        const apiUrl =
+          "https://api.allorigins.win/get?url=" +
+          encodeURIComponent("https://zenquotes.io/api/today");
 
         try {
           const response = await fetch(proxyUrl + apiUrl);
@@ -130,7 +131,7 @@
         );
         const habitHistory =
           JSON.parse(localStorage.getItem("habitHistory")) || [];
-        const tooltip = document.getElementById("global-tooltip"); // Access the global portal
+        const tooltip = document.getElementById("global-tooltip");
 
         monthContainer.innerHTML = '<p class="bar-title">HABIT THIS MONTH</p>';
 
@@ -172,10 +173,8 @@
           const cube = document.createElement("div");
           cube.className = "habit-cube";
 
-          // Define the info string for the portal tooltip
           const info = `${habit.date} | ${habit.duration}m | +${habit.points}pts`;
 
-          // Attach the same Portal event listeners
           cube.addEventListener("mouseover", () => {
             tooltip.textContent = info;
             tooltip.style.visibility = "visible";
