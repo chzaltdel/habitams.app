@@ -124,7 +124,18 @@
   <script>
     let timerInterval; 
     let endTime; 
-    let totalPoints = parseInt(localStorage.getItem('userPoints')) || 0;
+    
+    let totalPoints;
+    if (localStorage.getItem('userPoints') === null) {
+        // This is the first time the user has ever opened the site
+        totalPoints = 500;
+        localStorage.setItem('userPoints', totalPoints);
+    } else {
+        // User has been here before, load their existing points
+        totalPoints = parseInt(localStorage.getItem('userPoints'));
+    }
+
+
     let habitHistory = JSON.parse(localStorage.getItem('habitHistory')) || [];
     let customTasks = JSON.parse(localStorage.getItem('customTasks')) || [];
     const completionSound = new Audio('styles/sounds/alert-sunkiss.wav');
