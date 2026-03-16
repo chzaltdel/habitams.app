@@ -591,6 +591,16 @@
 
       let totalPoints = parseInt(localStorage.getItem("userPoints")) || 0;
 
+      let totalPoints;
+      if (localStorage.getItem("userPoints") === null) {
+        // This is the first time the user has ever opened the site
+        totalPoints = 500;
+        localStorage.setItem("userPoints", totalPoints);
+      } else {
+        // User has been here before, load their existing points
+        totalPoints = parseInt(localStorage.getItem("userPoints"));
+      }
+
       function updatePointsDisplay() {
         document.getElementById("totalPointsDisplay").innerText =
           `Total Points: ${totalPoints}`;
